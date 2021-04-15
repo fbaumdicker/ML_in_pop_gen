@@ -1,9 +1,9 @@
 This directory builds several estimators to predict theta from coalescent simulation und compares them by using the mean squared error.
 To perform the results of the paper, several steps must be taken:
-1) Simulate data via ms prime (`scripts/sim_train_data.py` and `scripts/sim_test_data.py`)
-2) Train Neural Networks (`scripts/train_linear_NN.py` and `scripts/train_adaptive_NN.py`)
-3) Evaluate, both model-based (Watterson, MVUE, MMSEE, ItV, ItMSE) and model-free estimators (linear NN and adaptive NN with one hidden layer) on test data (`scripts/eval_estimators.py`)
-4) plot the results (`scripts/plot_nmse.py`, `scripts/plot_bias.py`, `scripts/plot_nmse_rho.py`)
+1) Simulate data via ms prime (see `scripts/sim_train_data_example.py` and `scripts/sim_test_data_example.py`)
+2) Train Neural Networks (see `scripts/train_linear_NN_example.py` and `scripts/train_adaptive_NN_example.py`)
+3) Evaluate, both model-based (Watterson, MVUE, MMSEE, ItV, ItMSE) and model-free estimators (linear NN and adaptive NN with one hidden layer) on test data (see `scripts/eval_estimators_example.py`)
+4) plot the results (see `scripts/plot_nmse_example.py`, `scripts/plot_bias_example.py`, `scripts/plot_nmse_rho_example.py`)
 
 The directory is organised in three levels:
 - source: here you can find all functions to simulate the data, train the NN, compute model-based estimators, evaluate all estimators, save and load results. To reproduce the results from the paper you do not have to adapt anything in this folder
@@ -20,13 +20,13 @@ The following commands will train a linear NN and an adaptiv NN by using precalc
 3) Change directory:
     `cd scripts`
 3) Train linear NN for rho=0: 
-    `python3 train_linear_NN.py`
+    `python3 train_linear_NN_example.py`
 4) Train adaptive NN for rho=0 (this step can take a few minutes):
-    `python3 train_adaptive_NN.py`
+    `python3 train_adaptive_NN_example.py`
 5) Evaluate both model-based (Watterson and ItMSE) and model-free estimators (linear NN and adaptive NN with one hidden layer) on test data:
-    `python3 eval_estimators.py`
+    `python3 eval_estimators_example.py`
 6) Plot NMSE for rho=0:
-    `python3 plot_nmse.py`
+    `python3 plot_nmse_example.py`
     
 NOTE: For the plots in the paper, estimators were tested on larger data sets (each test set consists of 10000 SFS instead of 1000 SFS.)
    
