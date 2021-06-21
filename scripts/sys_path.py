@@ -9,3 +9,4 @@ Created on Sat Dec 19 12:14:08 2020
 import sys
 
 sys.path.append("../")
+sys.path.append("./")
