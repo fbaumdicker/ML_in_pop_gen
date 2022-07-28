@@ -1,9 +1,18 @@
-This directory builds several estimators to predict theta from coalescent simulation und compares them by using the mean squared error.
+Code to the publication: Neural Networks for self-adjusting Mutation Rate Estimation when the Recombination Rate is unknown.
+
+Cite: `doi: https://doi.org/10.1101/2021.09.02.457550`, bioRxiv.
+
+This directory builds several estimators to predict the scaled mutation rate theta from coalescent simulation and compares them by using the mean squared error.
 To perform the results of the paper, several steps must be taken:
-1) Simulate data via ms prime (see `scripts/sim_train_data_example.py` and `scripts/sim_test_data_example.py`)
+1) Simulate data via msprime (see `scripts/sim_train_data_example.py` and `scripts/sim_test_data_example.py`)
 2) Train Neural Networks (see `scripts/train_linear_NN_example.py` and `scripts/train_adaptive_NN_example.py`)
-3) Evaluate, both model-based (Watterson, MVUE, MMSEE, ItV, ItMSE) and model-free estimators (linear NN and adaptive NN with one hidden layer) on test data (see `scripts/eval_estimators_example.py`)
-4) plot the results (see `scripts/plot_nmse_example.py`, `scripts/plot_bias_example.py`, `scripts/plot_nmse_rho_example.py`)
+3) Evaluate, both model-based (Watterson, Futschik (iter) MVUE, MMSEE, ItV) and model-free estimators (linear NN and adaptive NN with one hidden layer) on test data (see `scripts/eval_estimators_example.py`)
+4) Plot the results (see `scripts/plot_nmse_example.py`, `scripts/plot_bias_example.py`, `scripts/plot_nmse_rho_example.py`)
+
+To apply the estimators to data based on the human chromosome 2 and reproduce the corresponding plots, run the following scripts:
+5) Simulate data based on the recombination map from the human chromosome 2 (see `scripts/sim_chr2_example.py`)
+6) Plot the recombination map and theta estimation along the genome (see `scripts/plot_chr2_recomb_map_theta_est_example.py`)
+7) Create the violin plot for chromosome 2 (see `plot_chr2_violin_example.py`)
 
 The directory is organised in three levels:
 - source: here you can find all functions to simulate the data, train the NN, compute model-based estimators, evaluate all estimators, save and load results. To reproduce the results from the paper you do not have to adapt anything in this folder
@@ -29,6 +38,5 @@ The following commands will train a linear NN and an adaptiv NN by using precalc
     `python3 plot_nmse_example.py`
     
 NOTE: For the plots in the paper, estimators were tested on larger data sets (each test set consists of 10000 SFS instead of 1000 SFS.)
-
 
 To compute and print the coefficients of Fu's estimator, i.e. the MVUE estimator and Futschik's estimator, i.e. the MMSEE estimator use the command `python3 scripts/compute_numerical_coeff_example.py sample_size true_mutation_rate`.

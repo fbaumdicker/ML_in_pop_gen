@@ -431,7 +431,7 @@ def evaluate_rho_variable(
             + str(n)
             + "_rep_"
             + str(rep_training_data)
-            + "_rho_35_theta_random-100_3",
+            + "_rho_35_theta_random-100_1",
             compile=False,
         ).predict(X_test)
         y_pred_linear_35 = keras.models.load_model(
@@ -467,7 +467,7 @@ def evaluate_rho_variable(
             + str(n)
             + "_rep_"
             + str(rep_training_data_rho_var)
-            + "_rho_var_theta_random-100_5",
+            + "_rho_var_theta_random-100_1",
             compile=False,
         ).predict(X_test)
         y_pred_linear_var = keras.models.load_model(
@@ -475,7 +475,7 @@ def evaluate_rho_variable(
             + str(n)
             + "_rep_"
             + str(rep_training_data_rho_var)
-            + "_rho_var_theta_random-100_2",
+            + "_rho_var_theta_random-100",
             compile=False,
         ).predict(X_test)
 
