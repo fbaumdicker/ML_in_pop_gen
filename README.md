@@ -1,6 +1,6 @@
 Code to the publication: Neural Networks for self-adjusting Mutation Rate Estimation when the Recombination Rate is unknown.
 
-Cite: `doi: https://doi.org/10.1101/2021.09.02.457550, bioRxiv`.
+Cite: `doi: https://doi.org/10.1101/2021.09.02.457550`, bioRxiv.
 
 This directory builds several estimators to predict the scaled mutation rate theta from coalescent simulation and compares them by using the mean squared error.
 To perform the results of the paper, several steps must be taken:
