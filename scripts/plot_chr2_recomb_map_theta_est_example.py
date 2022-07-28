@@ -1,8 +1,10 @@
-""" script to plot recombination map for human chromosome 2 and theta estimation of the adaptive neural
-network, linear neural network, watterson's estimator and the iterative version of Futschik's and Gach's estimator along
-the genome.
+""" script to plot recombination map for human chromosome 2 and theta
+estimation of the adaptive neural network, linear neural network,
+watterson's estimator and the iterative version of Futschik's and
+Gach's estimator along the genome.
 
-Note: SFS needs to be computed via the script sim_chr2.py before running this script.
+Note: SFS needs to be computed via the script sim_chr2.py before
+running this script.
 """
 
 import numpy
@@ -32,14 +34,16 @@ reddishpurple = numpy.array([[0.8, 0.47, 0.65]])
 
 # get recombination map for human chromosome 2 (chr2).
 species = stdpopsim.get_species("HomSap")
-contig = species.get_contig("chr2", genetic_map = "HapMapII_GRCh37")
+contig = species.get_contig("chr2", genetic_map="HapMapII_GRCh37")
 positions = numpy.array(contig.recombination_map.get_positions())
 rates = numpy.array(contig.recombination_map.get_rates())
 
 # load computed SFS for chr2.
 df1 = []
 mut_bin = []
-input_data = numpy.load("../data/simulations/SFS_along_chr2_seed_"+str(seed)+".npz", allow_pickle=True)
+input_data = numpy.load(
+    "../data/simulations/SFS_along_chr2_seed_" + str(seed) + ".npz", allow_pickle=True
+)
 for SFS, mut in zip(input_data["SFS_along_chr"], input_data["mut_bin_edges"]):
     df1.append(SFS[0 : num_sample - 1].tolist())
     mut_bin.append(mut)
@@ -47,34 +51,46 @@ for SFS, mut in zip(input_data["SFS_along_chr"], input_data["mut_bin_edges"]):
 # compute SFS based on a sliding window of size 70kb for theta estimation.
 print("compute SFS based on a sliding window of size 70kb for theta estimation.")
 df2 = numpy.array(df1)
-sum_SFS = numpy.zeros((1, num_sample-1))[0]
+sum_SFS = numpy.zeros((1, num_sample - 1))[0]
 moving_SFS = []
-for i in range(0,len(df2)-10):
+for i in range(0, len(df2) - 10):
     for j in range(0, 10):
-        sum_SFS += df2[i+j]
+        sum_SFS += df2[i + j]
     moving_SFS.append(sum_SFS)
-    sum_SFS = numpy.zeros((1, num_sample-1))[0]
+    sum_SFS = numpy.zeros((1, num_sample - 1))[0]
 df2 = numpy.array(moving_SFS)
 X_test = pd.DataFrame(df2)
 
 # compute recombination rates along the chr2 based on a sliding window of 70kb.
-print("compute recombination rates along the chr2 based on a sliding window of 70kb. this step may take 3-5min, to "
-      "reduce runtime save calculation result und load before next run.")
+print(
+    "compute recombination rates along the chr2 based on a sliding window of 70kb."
+    "this step may take 3-5min, to reduce runtime save calculation result und load"
+    "before next run."
+)
 rate_map = msprime.RateMap(position=positions, rate=rates[:-1])
 moving_rho = []
-for i in range(0, len(df1)-10):
-        sum_rho = 0
-        moving_rho.append(numpy.sum(rate_map.get_rate(range(int(mut_bin[i]), int(mut_bin[i+10])))) * species.population_size * 4)
+for i in range(0, len(df1) - 10):
+    sum_rho = 0
+    moving_rho.append(
+        numpy.sum(rate_map.get_rate(range(int(mut_bin[i]), int(mut_bin[i + 10]))))
+        * species.population_size
+        * 4
+    )
 moving_rho = numpy.array(moving_rho)
 print("mean recombination rate of chr2:", numpy.mean(moving_rho))
 
 # test estimators on chr2 data
 # ANN
-ann_pred = keras.models.load_model("../data/saved_NN/adaptive_NN_1hl_200_n_40_rep_600000_rho_var_theta_random-100_1", compile=False).predict(X_test)
+ann_pred = keras.models.load_model(
+    "../data/saved_NN/adaptive_NN_1hl_200_n_40_rep_600000_rho_var_theta_random-100_1",
+    compile=False,
+).predict(X_test)
 ann_pred_array = numpy.array([ann_pred[i, 0] for i in range(0, len(df2))])
 
 # Linear NN
-lin_nn_pred = keras.models.load_model("../data/saved_NN/Linear_NN_n_40_rep_600000_rho_var_theta_random-100", compile=False).predict(X_test)
+lin_nn_pred = keras.models.load_model(
+    "../data/saved_NN/Linear_NN_n_40_rep_600000_rho_var_theta_random-100", compile=False
+).predict(X_test)
 lin_nn_pred_array = numpy.array([lin_nn_pred[i, 0] for i in range(0, len(df2))])
 
 # Futschik (iter)
@@ -103,10 +119,14 @@ font = font_manager.FontProperties(size=25)
 
 ax1 = plt.subplot(1, 1, 1)
 mut_bin_rho = mut_bin[4:-6]
-(line1,) = plt.step(numpy.array(mut_bin_rho)[numpy.logical_not(numpy.isnan(moving_rho))],moving_rho[numpy.logical_not(numpy.isnan(moving_rho))],"tab:gray")
+(line1,) = plt.step(
+    numpy.array(mut_bin_rho)[numpy.logical_not(numpy.isnan(moving_rho))],
+    moving_rho[numpy.logical_not(numpy.isnan(moving_rho))],
+    "tab:gray",
+)
 ax1.set_ylabel("Recombination rate")
 ax1.set_xlabel("Chromosome position")
-plt.xlim(a*1e8, b*1e8)
+plt.xlim(a * 1e8, b * 1e8)
 plt.ylim(-10, c)
 
 # show and save plot as pdf
@@ -124,16 +144,40 @@ font = font_manager.FontProperties(size=25)
 
 ax2 = plt.subplot(1, 1, 1)
 mut_bin_est = mut_bin[4:-6]
-(line1,) = plt.plot(numpy.array(mut_bin_est)[numpy.logical_not(numpy.isnan(wat_pred))],wat_pred[numpy.logical_not(numpy.isnan(wat_pred))],color=bluishgreen,label=r"Watterson")
-(line2,) = plt.plot(numpy.array(mut_bin_est)[numpy.logical_not(numpy.isnan(futschik_pred))], futschik_pred[numpy.logical_not(numpy.isnan(futschik_pred))], color=reddishpurple, label=r"Futschik (iter)")
-(line3,) = plt.plot(numpy.array(mut_bin_est)[numpy.logical_not(numpy.isnan(lin_nn_pred_array))],lin_nn_pred_array[numpy.logical_not(numpy.isnan(lin_nn_pred_array))],
-                    color=vermilion,label=r"Linear NN")
-(line4,) = plt.plot(numpy.array(mut_bin_est)[numpy.logical_not(numpy.isnan(ann_pred_array))],ann_pred_array[numpy.logical_not(numpy.isnan(ann_pred_array))],color=blue,label=r"Adaptive NN")
-(line5,) = plt.plot(numpy.array(mut_bin_est)[numpy.logical_not(numpy.isnan(theta_est))],theta_est[numpy.logical_not(numpy.isnan(theta_est))],label=r"true $\theta$",color="tab:gray")
-ax2.set_ylabel((r'$\theta$ estimate'))
+(line1,) = plt.plot(
+    numpy.array(mut_bin_est)[numpy.logical_not(numpy.isnan(wat_pred))],
+    wat_pred[numpy.logical_not(numpy.isnan(wat_pred))],
+    color=bluishgreen,
+    label=r"Watterson",
+)
+(line2,) = plt.plot(
+    numpy.array(mut_bin_est)[numpy.logical_not(numpy.isnan(futschik_pred))],
+    futschik_pred[numpy.logical_not(numpy.isnan(futschik_pred))],
+    color=reddishpurple,
+    label=r"Futschik (iter)",
+)
+(line3,) = plt.plot(
+    numpy.array(mut_bin_est)[numpy.logical_not(numpy.isnan(lin_nn_pred_array))],
+    lin_nn_pred_array[numpy.logical_not(numpy.isnan(lin_nn_pred_array))],
+    color=vermilion,
+    label=r"Linear NN",
+)
+(line4,) = plt.plot(
+    numpy.array(mut_bin_est)[numpy.logical_not(numpy.isnan(ann_pred_array))],
+    ann_pred_array[numpy.logical_not(numpy.isnan(ann_pred_array))],
+    color=blue,
+    label=r"Adaptive NN",
+)
+(line5,) = plt.plot(
+    numpy.array(mut_bin_est)[numpy.logical_not(numpy.isnan(theta_est))],
+    theta_est[numpy.logical_not(numpy.isnan(theta_est))],
+    label=r"true $\theta$",
+    color="tab:gray",
+)
+ax2.set_ylabel((r"$\theta$ estimate"))
 ax2.set_xlabel("Chromosome position")
 plt.legend(loc="upper left")
-plt.xlim(a*1e8, b*1e8)
+plt.xlim(a * 1e8, b * 1e8)
 
 # show and save plot as pdf
 plt.show()
