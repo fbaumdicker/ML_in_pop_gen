@@ -39,4 +39,4 @@ The following commands will train a linear NN and an adaptiv NN by using precalc
     
 NOTE: For the plots in the paper, estimators were tested on larger data sets (each test set consists of 10000 SFS instead of 1000 SFS.)
 
-To compute and print the coefficients of Fu's estimator, i.e. the MVUE estimator, and Futschik's estimator, i.e. the MMSEE estimator, use the command `python3 scripts/compute_numerical_coeff_example.py sample_size true_mutation_rate`.
+To compute and print the coefficients of Fu's estimator, i.e. the MVUE estimator and Futschik's estimator, i.e. the MMSEE estimator use the command `python3 scripts/compute_numerical_coeff_example.py sample_size true_mutation_rate`.
